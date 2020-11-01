@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="COMP3512 Assignment01">
+    <meta name="author" content="Lorenzo Young">
+    <title>COMP 3512 Assign1</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="javascript.js"></script>
+</head>
+
+<body>
+    <div class="loader">
+        <div class="face face1">
+            <div class="circle"></div>
+        </div>
+        <div class="face face2">
+            <div class="circle"></div>
+        </div>
+    </div>
+    <main>
+        <div class="header box">
+            <h1>COMP 3512</h1>
+            <h2>Lorenzo Ivan Young</h2>
+        </div>
+        <div class="galleryList left box nav">
+            A
+            <ul></ul>
+        </div>
+        <div class="galleryInfo box b">B
+            <section>
+                <h2 id="galleryName"></h2>
+                <label>Native Name:</label>
+                <span id="galleryNative"></span>
+                <label>Address:</label>
+                <span id="galleryAddress"></span>
+                <label>City:</label>
+                <span id="galleryCity"></span>
+                <label>Country:</label>
+                <span id="galleryCountry"></span>
+                <label>Home:</label>
+                <span><a href="" id="galleryHome"></a></span>
+            </section>
+        </div>
+        <div class="galleryMap box c">C</div>
+        <div class="paintingList right box">
+            <h2>Paintings</h2>
+            <div><label></label><label>Artist</label><label>Title</label><label>Year</label></div>
+            <ul>
+            </ul>
+        </div>
+    </main>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRQhhoXwumF2fw-S5AY_8PGXanslMsutk&callback=initMap"
+        async defer></script>
+</body>
+
+</html>
