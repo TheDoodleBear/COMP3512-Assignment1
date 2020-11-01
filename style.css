@@ -198,9 +198,13 @@
 
     .paintingList li {
         display: grid;
-        grid-template: 1fr 1fr/1fr 1fr 1fr 1fr;
+        grid-template: 1fr/1fr 1fr 1fr 1fr;
         padding: 5px 0px;
+        align-items: center;
+        justify-content: center;
     }
+
+   
 
     #galleryName {
         grid-column: 1 / 3;

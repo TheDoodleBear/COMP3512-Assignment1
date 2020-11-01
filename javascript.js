@@ -1,12 +1,12 @@
 var map;
 const galleryInfo = "https://www.randyconnolly.com/funwebdev/3rd/api/art/galleries.php"
-var paintings = "https://www.randyconnolly.com/funwebdev/3rd/api/art/paintings.php?gallery="
+let paintings = "https://www.randyconnolly.com/funwebdev/3rd/api/art/paintings.php?gallery="
 let paintURL = "https://res.cloudinary.com/funwebdev/image/upload/h_50/art/paintings/";
 let sortArt;
 let sortTitle;
 let sortYear;
 function initMap() { }
-
+// Create Map object and display it after loading API data
 function createMap(obj) {
     map = new google.maps.Map(document.querySelector('.galleryMap'), {
         center: { lat: +obj.Latitude, lng: +obj.Longitude },
@@ -35,6 +35,50 @@ document.addEventListener("DOMContentLoaded", function () {
         }).catch(err => { console.warn(err) });
 })
 
+function displayGalleryList(data) {
+    //Hides the loader div
+    document.querySelector(".loader").style.display = "none";
+
+    let ulGallery = document.querySelector(".galleryList ul");
+    document.querySelector(".galleryList").firstChild.nodeValue = "";
+    // Display galleries on left div
+    data.forEach(gallery => {
+        const liElem = document.createElement("li");
+        liElem.textContent = `${gallery.GalleryName}`;
+        ulGallery.appendChild(liElem);
+    });
+    // Set main element to display as grid to allow proper inner div positioning. 
+    document.querySelector("main").style.display = "grid";
+    // Create event listener for gallery list when clicked. 
+    document.querySelector('main .galleryList').addEventListener('click', function (e) {
+        // Verify user has clicked on the right list element
+        if (e.target && e.target.nodeName.toLowerCase() == "li") {
+            // Resets all font colors to black when a user click a gallery name
+            let resetColor = document.querySelectorAll(".galleryList li");
+            for (let r of resetColor) {
+                r.style.color = "Black";
+            }
+            // Change font color of the gallery clicked. 
+            e.target.style.color = "white";
+            // finds the gallery's information and and fetched the information. 
+            const filterGallery = data.find(g => g.GalleryName == `${e.target.textContent}`);
+            // displays gallery information and Map location
+            displayGalleryInfo(filterGallery)
+            document.querySelector(".loader").style.display = "none";
+
+            getPaintData(`${paintings}${filterGallery.GalleryID}`)
+                .then(resolve1 => {
+                    displayPaintingList(resolve1, filterGallery.GalleryID);
+                    sortArt = true;
+                    sortTitle = false;
+                    sortYear = false;
+                }).catch(err => { console.warn(err) });
+
+        }
+    });
+}
+
+// Fetched gallery data from galleryInfo API
 async function getData(url) {
     const response = await fetch(url);
     const data = await response.json();
@@ -46,49 +90,7 @@ async function getData(url) {
     })
 }
 
-function displayGalleryList(data) {
-    document.querySelector(".loader").style.display = "none";
-    let ulGallery = document.querySelector(".galleryList ul");
-    document.querySelector(".galleryList").firstChild.nodeValue = "";
-    data.forEach(gallery => {
-        const liElem = document.createElement("li");
-        liElem.textContent = `${gallery.GalleryName}`;
-        ulGallery.appendChild(liElem);
-    });
-    document.querySelector("main").style.display = "grid";
-    document.querySelector('main .galleryList').addEventListener('click', function (e) {
-        // Verify user has clicked on the right list element
-        if (e.target && e.target.nodeName.toLowerCase() == "li") {
-            let resetColor = document.querySelectorAll(".galleryList li");
-            for (let r of resetColor) {
-                r.style.color = "Black";
-            }
-            e.target.style.color = "white";
-            const filterGallery = data.find(g => g.GalleryName == `${e.target.textContent}`);
-            displayGalleryInfo(filterGallery)
-            document.querySelector(".loader").style.display = "none";
-            let paintAPI = `${paintings}${filterGallery.GalleryID}`;
-            getPaintData(paintAPI)
-                .then(resolve1 => {
-                    displayPaintingList(resolve1);
-                    document.querySelector('main .paintingList').addEventListener('click', function (e) {
-                        if (e.target && e.target.nodeName.toLowerCase() == "label") {
-                            let sortBy = e.target.textContent;
-                            if (sortBy == "Artist") {
-                                sortPaintArt(resolve1);
-                            } else if (sortBy == "Title") {
-                                sortPaintTitle(resolve1);
-                            } else if (sortBy == "Year") {
-                                sortPaintYear(resolve1);
-                            }
-                        }
-                    });
-                }).catch(err => { console.warn(err) });
-
-        }
-    });
-}
-
+// Fetches paint data from painting API + gallery ID
 async function getPaintData(url) {
     const response = await fetch(url);
     const data = await response.json();
@@ -96,27 +98,33 @@ async function getPaintData(url) {
         const sortedData = data.sort((a, b) => {
             return a.LastName < b.LastName ? -1 : 1;
         });
-        setTimeout(() => resolve(sortedData), 500);
+        setTimeout(() => resolve(sortedData), 0);
     })
 }
 
-function sortPaintArt(obj) {
-    if (sortArt) {
-        sortArt = false;
-        sortedArt = obj.sort((a, b) => {
-            return a.LastName < b.LastName ? -1 : 1;
-        });
-    } else {
-        sortArt = true;
-        sortedArt = obj.sort((a, b) => {
-            return a.LastName < b.LastName ? 1 : -1;
-        });
-    }
-    console.log(sortArt);
-    console.log(sortedArt);
-    displayPaintingList(sortedArt);
+
+// Sort paintings by Artist
+async function sortPaintArt(obj) {
+    const response = await fetch(obj);
+    const data = await response.json();
+    return new Promise((resolve, rejected) => {
+        if (sortArt) {
+            sortArt = false;
+            sortedArt = data.sort((a, b) => {
+                return a.LastName < b.LastName ? -1 : 1;
+            });
+        } else {
+            sortArt = true;
+            sortedArt = data.sort((a, b) => {
+                return a.LastName < b.LastName ? 1 : -1;
+            });
+        }
+        setTimeout(() => resolve(sortedArt), 0);
+    })
 }
 
+
+// Sort paintings by Title
 function sortPaintTitle(obj) {
     if (sortTitle) {
         sortedTitle = obj.sort((a, b) => {
@@ -129,11 +137,10 @@ function sortPaintTitle(obj) {
         });
         sortTitle = true;
     }
-    console.log(sortTitle);
-    console.log(sortedTitle);
     displayPaintingList(sortedTitle);
 }
 
+// Sort paintings by year
 function sortPaintYear(obj) {
     if (sortYear) {
         sortedYear = obj.sort((a, b) => {
@@ -146,12 +153,10 @@ function sortPaintYear(obj) {
         });
         sortYear = true;
     }
-    console.log(sortYear);
-    console.log(sortedYear);
     displayPaintingList(sortedYear);
 }
 
-
+// Display gallery's information.
 function displayGalleryInfo(obj) {
     document.querySelector(".galleryInfo").firstChild.nodeValue = "";
     document.querySelector(" #galleryName").textContent = `${obj.GalleryName}`;
@@ -166,7 +171,12 @@ function displayGalleryInfo(obj) {
 
 }
 
-function displayPaintingList(obj) {
+// Display the list of paintings of the gallery
+function displayPaintingList(obj, id) {
+    let paintDiv = document.querySelector(".paintingList");
+    paintDiv.innerHTML = `<h2>Paintings</h2>
+        <div><label></label><label>Artist</label><label>Title</label><label>Year</label></div>
+        <ul></ul>`;
     let paintUL = document.querySelector(".paintingList ul");
     paintUL.innerHTML = "";
     obj.forEach(gallery => {
@@ -191,20 +201,27 @@ function displayPaintingList(obj) {
         liElem.appendChild(divYear);
         paintUL.appendChild(liElem);
     });
-
+/* 
+    document.querySelector('main .paintingList').addEventListener('click', function (e) {
+        if (e.target && e.target.nodeName.toLowerCase() == "label") {
+            let sortBy = e.target.textContent;
+            switch (sortBy) {
+                case "Artist":
+                    console.log(obj);
+                    sortPaintArt(`${paintings}${id}`)
+                    .then(resolve => {
+                        displayPaintingList(resolve);
+                    })
+                    break;
+                case "Title":
+                    console.log(obj);
+                    //sortPaintArt(gallery);
+                    break;
+                default:
+                    getPaintData(`${paintings}${obj.GalleryID}`)
+                    break;
+            }
+        }
+    });
+     */
 }
-
-/*
- document.querySelector('button').addEventListener('click', function() {
-    toggle();
-})
-
-let expanded = false;
-
-function toggle() {
-    let container = document.querySelector("#pList");
-    container.classList.toggle('expand');
-    container.classList.toggle('right-box');
-
-}
- */
