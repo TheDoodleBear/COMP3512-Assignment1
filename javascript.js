@@ -15,7 +15,6 @@ function createMap(obj) {
         mapTypeId: 'satellite',
         zoom: 17
     });
-    document.querySelector(".galleryMap").firstChild.nodeValue = "";
     document.querySelector(".galleryMap").style.display = "block";
     createMarker(map, obj.Latitude, obj.Longitude, obj.GalleryCity)
 }
@@ -44,7 +43,6 @@ function displayGalleryList(data) {
     document.querySelector(".loader").style.display = "none";
 
     let ulGallery = document.querySelector(".galleryList ul");
-    document.querySelector(".galleryList").firstChild.nodeValue = "";
     // Display galleries on left div
     data.forEach(gallery => {
         const liElem = document.createElement("li");
@@ -107,7 +105,6 @@ async function getPaintData(url) {
 
 // Display gallery's information.
 function displayGalleryInfo(obj) {
-    document.querySelector(".galleryInfo").firstChild.nodeValue = "";
     document.querySelector(".galleryInfo #galleryName").textContent = `${obj.GalleryName}`;
     document.querySelector(".galleryInfo #galleryNative").textContent = `${obj.GalleryName}`;
     document.querySelector(".galleryInfo #galleryCity").textContent = `${obj.GalleryCity}`;
