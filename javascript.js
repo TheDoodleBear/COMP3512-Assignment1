@@ -1,11 +1,13 @@
 var map;
 const galleryInfo = "https://www.randyconnolly.com/funwebdev/3rd/api/art/galleries.php"
 let paintings = "https://www.randyconnolly.com/funwebdev/3rd/api/art/paintings.php?gallery="
-let paintURL = "https://res.cloudinary.com/funwebdev/image/upload/h_50/art/paintings/";
+let paintURL50 = "https://res.cloudinary.com/funwebdev/image/upload/h_50/art/paintings/";
+let paintURL200 = "https://res.cloudinary.com/funwebdev/image/upload/w_950/art/paintings/";
 let sortArt;
 let sortTitle;
 let sortYear;
-function initMap() { }
+
+function initMap() {}
 // Create Map object and display it after loading API data
 function createMap(obj) {
     map = new google.maps.Map(document.querySelector('.galleryMap'), {
@@ -18,6 +20,7 @@ function createMap(obj) {
     createMarker(map, obj.Latitude, obj.Longitude, obj.GalleryCity)
 }
 
+// Create Map marker and display it after loading API data
 function createMarker(map, latitude, longitude, city) {
     let imageLatLong = { lat: latitude, lng: longitude };
     let marker = new google.maps.Marker({
@@ -27,7 +30,8 @@ function createMarker(map, latitude, longitude, city) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+// Wait for document to load before processing
+document.addEventListener("DOMContentLoaded", function() {
     getData(galleryInfo)
         .then(resolves => {
             // Display gallery list (left div)
@@ -48,9 +52,9 @@ function displayGalleryList(data) {
         ulGallery.appendChild(liElem);
     });
     // Set main element to display as grid to allow proper inner div positioning. 
-    document.querySelector("main").style.display = "grid";
+    document.querySelector("section").style.display = "grid";
     // Create event listener for gallery list when clicked. 
-    document.querySelector('main .galleryList').addEventListener('click', function (e) {
+    document.querySelector('main .galleryList').addEventListener('click', function(e) {
         // Verify user has clicked on the right list element
         if (e.target && e.target.nodeName.toLowerCase() == "li") {
             // Resets all font colors to black when a user click a gallery name
@@ -73,7 +77,6 @@ function displayGalleryList(data) {
                     sortTitle = false;
                     sortYear = false;
                 }).catch(err => { console.warn(err) });
-
         }
     });
 }
@@ -102,73 +105,18 @@ async function getPaintData(url) {
     })
 }
 
-
-// Sort paintings by Artist
-async function sortPaintArt(obj) {
-    const response = await fetch(obj);
-    const data = await response.json();
-    return new Promise((resolve, rejected) => {
-        if (sortArt) {
-            sortArt = false;
-            sortedArt = data.sort((a, b) => {
-                return a.LastName < b.LastName ? -1 : 1;
-            });
-        } else {
-            sortArt = true;
-            sortedArt = data.sort((a, b) => {
-                return a.LastName < b.LastName ? 1 : -1;
-            });
-        }
-        setTimeout(() => resolve(sortedArt), 0);
-    })
-}
-
-
-// Sort paintings by Title
-function sortPaintTitle(obj) {
-    if (sortTitle) {
-        sortedTitle = obj.sort((a, b) => {
-            return a.Title < b.Title ? -1 : 1;
-        });
-        sortTitle = false;
-    } else {
-        sortedTitle = obj.sort((a, b) => {
-            return a.Title < b.Title ? 1 : -1;
-        });
-        sortTitle = true;
-    }
-    displayPaintingList(sortedTitle);
-}
-
-// Sort paintings by year
-function sortPaintYear(obj) {
-    if (sortYear) {
-        sortedYear = obj.sort((a, b) => {
-            return a.YearOfWork < b.YearOfWork ? -1 : 1;
-        });
-        sortYear = false;
-    } else {
-        sortedYear = obj.sort((a, b) => {
-            return a.YearOfWork < b.YearOfWork ? 1 : -1;
-        });
-        sortYear = true;
-    }
-    displayPaintingList(sortedYear);
-}
-
 // Display gallery's information.
 function displayGalleryInfo(obj) {
     document.querySelector(".galleryInfo").firstChild.nodeValue = "";
-    document.querySelector(" #galleryName").textContent = `${obj.GalleryName}`;
-    document.querySelector(" #galleryNative").textContent = `${obj.GalleryName}`;
-    document.querySelector(" #galleryCity").textContent = `${obj.GalleryCity}`;
-    document.querySelector(" #galleryAddress").textContent = `${obj.GalleryAddress}`;
-    document.querySelector(" #galleryCountry").textContent = `${obj.GalleryCountry}`;
-    document.querySelector(" #galleryHome").setAttribute('href', `${obj.GalleryWebSite}`);
-    document.querySelector(" #galleryHome").textContent = `${obj.GalleryWebSite}`;
+    document.querySelector(".galleryInfo #galleryName").textContent = `${obj.GalleryName}`;
+    document.querySelector(".galleryInfo #galleryNative").textContent = `${obj.GalleryName}`;
+    document.querySelector(".galleryInfo #galleryCity").textContent = `${obj.GalleryCity}`;
+    document.querySelector(".galleryInfo #galleryAddress").textContent = `${obj.GalleryAddress}`;
+    document.querySelector(".galleryInfo #galleryCountry").textContent = `${obj.GalleryCountry}`;
+    document.querySelector(".galleryInfo #galleryHome").setAttribute('href', `${obj.GalleryWebSite}`);
+    document.querySelector(".galleryInfo #galleryHome").textContent = `${obj.GalleryWebSite}`;
     document.querySelector(".galleryInfo section").style.display = "grid";
     createMap(obj);
-
 }
 
 // Display the list of paintings of the gallery
@@ -184,9 +132,9 @@ function displayPaintingList(obj, id) {
         const liImg = document.createElement("img");
         const divArtist = document.createElement("span");
         const divTitle = document.createElement("span");
-        divTitle.setAttribute("id", "pTitle");
+        divTitle.setAttribute("class", "pTitle");
         const divYear = document.createElement("span");
-        liImg.src = `${paintURL}${gallery.ImageFileName}`
+        liImg.src = `${paintURL50}${gallery.ImageFileName}`
         liImg.setAttribute("title", `${gallery.Title}`);
         liImg.setAttribute("alt", `${gallery.Title}`);
         liElem.appendChild(liImg)
@@ -201,27 +149,44 @@ function displayPaintingList(obj, id) {
         liElem.appendChild(divYear);
         paintUL.appendChild(liElem);
     });
-/* 
-    document.querySelector('main .paintingList').addEventListener('click', function (e) {
-        if (e.target && e.target.nodeName.toLowerCase() == "label") {
-            let sortBy = e.target.textContent;
-            switch (sortBy) {
-                case "Artist":
-                    console.log(obj);
-                    sortPaintArt(`${paintings}${id}`)
-                    .then(resolve => {
-                        displayPaintingList(resolve);
-                    })
-                    break;
-                case "Title":
-                    console.log(obj);
-                    //sortPaintArt(gallery);
-                    break;
-                default:
-                    getPaintData(`${paintings}${obj.GalleryID}`)
-                    break;
-            }
+
+    document.querySelector('.paintingList ul').addEventListener('click', function(e) {
+        if (e.target && e.target.nodeName.toLowerCase() == "span") {
+            const findPaint = obj.find(p => p.Title == `${e.target.textContent}`);
+            displaySingleView(findPaint);
         }
     });
-     */
+}
+
+function displaySingleView(object) {
+    console.log(object.Title);
+    let sView = document.querySelector("#singleView");
+    let hideBox = document.querySelectorAll("section .box");
+    // Create Painting Image;
+    document.querySelector(".paintInfo img").src = `${paintURL200}${object.ImageFileName}`;
+    // Create Painting Title
+    document.querySelector(".paintInfo #Title").textContent = `${object.Title}`
+        // Create Artist Name
+    document.querySelector(".paintInfo #paintArtist").textContent = `${object.FirstName} ${object.LastName}`;
+    document.querySelector(".paintInfo #paintCity").textContent = `${object.GalleryCity}`;
+    document.querySelector(".paintInfo #paintLink").textContent = `${object.FirstName} ${object.LastName}`;
+    document.querySelector(".paintInfo #paintLink").setAttribute('href', `${object.MuseumLink}`);
+    document.querySelector(".paintInfo #paintCopyR").textContent = `${object.CopyrightText}`;
+    document.querySelector(".paintInfo #paintYOW").textContent = `${object.YearOfWork}`;;
+    document.querySelector(".paintInfo #paintH").textContent = `${object.Height}`;;
+    document.querySelector(".paintInfo #paintD").textContent = `${object.Width}`;;
+    document.querySelector(".paintInfo #paintMedium").textContent = `${object.Medium}`;;
+    document.querySelector(".paintInfo #paintDes").textContent = `${object.Description}`;;
+    //Create Gallery Name
+
+    hideBox.forEach(hide => {
+        hide.style.visibility = "hidden";
+    })
+    sView.style.visibility = "visible";
+    document.querySelector(".paintInfo button").addEventListener('click', function() {
+        hideBox.forEach(hide => {
+            hide.style.visibility = "visible";
+        })
+        sView.style.visibility = "hidden";
+    })
 }
