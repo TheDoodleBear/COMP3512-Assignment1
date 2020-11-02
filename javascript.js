@@ -163,11 +163,8 @@ function displaySingleView(object) {
     let sView = document.querySelector("#singleView");
     let hideBox = document.querySelectorAll("section .box");
     document.querySelector(".paintInfo img").src = '';
-    // Create Painting Image;
     document.querySelector(".paintInfo img").src = `${paintURL200}${object.ImageFileName}`;
-    // Create Painting Title
     document.querySelector(".paintInfo #Title").textContent = `${object.Title}`
-        // Create Artist Name
     document.querySelector(".paintInfo #paintArtist").textContent = `${object.FirstName} ${object.LastName}`;
     document.querySelector(".paintInfo #paintCity").textContent = `${object.GalleryCity}`;
     document.querySelector(".paintInfo #paintLink").textContent = `${object.MuseumLink}`;
@@ -177,8 +174,11 @@ function displaySingleView(object) {
     document.querySelector(".paintInfo #paintH").textContent = `${object.Height}`;;
     document.querySelector(".paintInfo #paintD").textContent = `${object.Width}`;;
     document.querySelector(".paintInfo #paintMedium").textContent = `${object.Medium}`;;
-    document.querySelector(".paintInfo #paintDes").textContent = `${object.Description}`;;
-    //Create Gallery Name
+    if (object.Description == null) {
+        document.querySelector(".paintInfo #paintDes").textContent = "Description Not Found";
+    } else {
+        document.querySelector(".paintInfo #paintDes").textContent = `${object.Description}`;;
+    }
 
     hideBox.forEach(hide => {
         hide.style.visibility = "hidden";
