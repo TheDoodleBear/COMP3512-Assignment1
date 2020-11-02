@@ -2,7 +2,7 @@ var map;
 const galleryInfo = "https://www.randyconnolly.com/funwebdev/3rd/api/art/galleries.php"
 let paintings = "https://www.randyconnolly.com/funwebdev/3rd/api/art/paintings.php?gallery="
 let paintURL50 = "https://res.cloudinary.com/funwebdev/image/upload/h_50/art/paintings/";
-let paintURL200 = "https://res.cloudinary.com/funwebdev/image/upload/w_950/art/paintings/";
+let paintURL200 = "https://res.cloudinary.com/funwebdev/image/upload/w_500/art/paintings/";
 let sortArt;
 let sortTitle;
 let sortYear;
@@ -162,6 +162,7 @@ function displaySingleView(object) {
     console.log(object.Title);
     let sView = document.querySelector("#singleView");
     let hideBox = document.querySelectorAll("section .box");
+    document.querySelector(".paintInfo img").src = '';
     // Create Painting Image;
     document.querySelector(".paintInfo img").src = `${paintURL200}${object.ImageFileName}`;
     // Create Painting Title
@@ -169,7 +170,7 @@ function displaySingleView(object) {
         // Create Artist Name
     document.querySelector(".paintInfo #paintArtist").textContent = `${object.FirstName} ${object.LastName}`;
     document.querySelector(".paintInfo #paintCity").textContent = `${object.GalleryCity}`;
-    document.querySelector(".paintInfo #paintLink").textContent = `${object.FirstName} ${object.LastName}`;
+    document.querySelector(".paintInfo #paintLink").textContent = `${object.MuseumLink}`;
     document.querySelector(".paintInfo #paintLink").setAttribute('href', `${object.MuseumLink}`);
     document.querySelector(".paintInfo #paintCopyR").textContent = `${object.CopyrightText}`;
     document.querySelector(".paintInfo #paintYOW").textContent = `${object.YearOfWork}`;;
